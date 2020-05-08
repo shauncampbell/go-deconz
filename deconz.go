@@ -9,9 +9,9 @@ import (
 	"net/url"
 )
 
-type SensorFoundFunc func ( uniqueId string, sensor *Sensor )
-type LightFoundFunc func ( uniqueId string, light *Light )
-type SensorStateChangeFunc func ( uniqueId string, state map[string]interface{})
+type SensorFoundFunc func ( d *Deconz, uniqueId string, sensor *Sensor )
+type LightFoundFunc func (  d *Deconz, uniqueId string, light *Light )
+type SensorStateChangeFunc func (  d *Deconz, uniqueId string, state map[string]interface{})
 //type LightStateChangeFunc func ( uniqueId string, state map[string]interface{})
 
 type Deconz struct {
@@ -76,7 +76,7 @@ func (d *Deconz) Scan() error {
 			}
 
 			if d.sensors[event.UniqueID] != nil && d.OnSensorStateChange != nil {
-				go d.OnSensorStateChange(event.UniqueID, event.State)
+				go d.OnSensorStateChange(d, event.UniqueID, event.State)
 			}
 		}
 	}()
@@ -109,7 +109,7 @@ func (d *Deconz) updateSensors() error {
 		v.Hub = d
 		d.sensors[v.UniqueID] = &v
 		if d.OnSensorFound != nil {
-			go d.OnSensorFound(v.UniqueID, &v)
+			go d.OnSensorFound(d, v.UniqueID, &v)
 		}
 	}
 
@@ -134,7 +134,7 @@ func (d *Deconz) updateLights() error {
 		v.Hub = d
 		d.lights[v.UniqueID] = &v
 		if d.OnLightFound != nil {
-			go d.OnLightFound(v.UniqueID, &v)
+			go d.OnLightFound(d, v.UniqueID, &v)
 		}
 	}
 
