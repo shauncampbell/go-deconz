@@ -90,6 +90,12 @@ func (d *Deconz) GetSensor(uniqueid string) (*Sensor, error) {
 	}
 	return d.sensors[uniqueid], nil
 }
+func (d *Deconz) GetLight(uniqueid string) (*Light, error) {
+	if d.lights[uniqueid] == nil {
+		return nil, fmt.Errorf("light not found")
+	}
+	return d.lights[uniqueid], nil
+}
 func (d *Deconz) updateSensors() error {
 	res, err := d.client.Get(fmt.Sprintf("http://%s/api/%s/sensors", d.HubAddress, d.Username))
 	if err != nil {
