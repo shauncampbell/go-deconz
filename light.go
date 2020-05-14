@@ -34,8 +34,10 @@ func (l *Light) SetPower(on bool) error {
 	}
 
 	if res.StatusCode == 200 {
+		l.State["on"] = on
 		return nil
 	}
+
 
 	return fmt.Errorf("failed to set light state")
 }
@@ -54,6 +56,7 @@ func (l *Light) SetBrightness(brightness int) error {
 	}
 
 	if res.StatusCode == 200 {
+		l.State["bri"] = brightness
 		return nil
 	}
 
