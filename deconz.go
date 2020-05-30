@@ -133,7 +133,7 @@ func (d *Deconz) updateSensors() error {
 
 	defer res.Body.Close()
 
-	var m map[string]Sensor
+	var m map[string]*Sensor
 	err = json.NewDecoder(res.Body).Decode(&m)
 	if err != nil {
 		return fmt.Errorf("failed to decode response: %w", err)
@@ -143,9 +143,9 @@ func (d *Deconz) updateSensors() error {
 		v.Id = k
 		v.Hub = d
 		sensor := m[k]
-		d.sensors[sensor.UniqueID] = &sensor
+		d.sensors[sensor.UniqueID] = sensor
 		if d.OnSensorFound != nil {
-			go d.OnSensorFound(d, sensor.UniqueID, &sensor)
+			go d.OnSensorFound(d, sensor.UniqueID, sensor)
 		}
 	}
 
@@ -159,7 +159,7 @@ func (d *Deconz) updateLights() error {
 
 	defer res.Body.Close()
 
-	var m map[string]Light
+	var m map[string]*Light
 	err = json.NewDecoder(res.Body).Decode(&m)
 	if err != nil {
 		return fmt.Errorf("failed to decode response: %w", err)
@@ -168,9 +168,9 @@ func (d *Deconz) updateLights() error {
 	for k, v := range m {
 		v.Id = k
 		v.Hub = d
-		d.lights[v.UniqueID] = &v
+		d.lights[v.UniqueID] = v
 		if d.OnLightFound != nil {
-			go d.OnLightFound(d, v.UniqueID, &v)
+			go d.OnLightFound(d, v.UniqueID, v)
 		}
 	}
 
