@@ -45,6 +45,35 @@ func NewDeconz(hubAddress, username string) (*Deconz, error) {
 	return &d, nil
 }
 
+func (d *Deconz) Lights() ([]*Light, error) {
+	lights := make([]*Light, 0)
+
+	if err := d.updateLights(); err != nil {
+		return nil, err
+	}
+
+	for _, v := range d.lights {
+		lights = append(lights, v)
+	}
+
+	return lights, nil
+}
+
+
+func (d *Deconz) Sensors() ([]*Sensor, error) {
+	sensors := make([]*Sensor, 0)
+
+	if err := d.updateSensors(); err != nil {
+		return nil, err
+	}
+
+	for _, v := range d.sensors {
+		sensors = append(sensors, v)
+	}
+
+	return sensors, nil
+}
+
 func (d *Deconz) Scan() error {
 	if err := d.updateSensors(); err != nil {
 		return fmt.Errorf("failed to update sensor list: %w", err)
