@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"sync"
 )
 
 type Light struct {
@@ -18,6 +19,7 @@ type Light struct {
 	SoftwareVersion  string                 `json:"swversion"`
 	Type             string                 `json:"type"`
 	UniqueID         string                 `json:"uniqueid"`
+	m sync.Mutex
 }
 
 func (l *Light) SetPower(on bool) error {
@@ -34,12 +36,18 @@ func (l *Light) SetPower(on bool) error {
 	}
 
 	if res.StatusCode == 200 {
-		l.State["on"] = on
+		l.updateState("on", on)
 		return nil
 	}
 
 
 	return fmt.Errorf("failed to set light state")
+}
+
+func (l *Light) updateState(variable string, value interface{}) {
+	l.m.Lock()
+	l.State[variable] = value
+	l.m.Unlock()
 }
 
 func (l *Light) SetBrightness(brightness int) error {
@@ -56,7 +64,7 @@ func (l *Light) SetBrightness(brightness int) error {
 	}
 
 	if res.StatusCode == 200 {
-		l.State["bri"] = brightness
+		l.updateState("bri", brightness)
 		return nil
 	}
 
