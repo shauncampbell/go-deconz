@@ -12,7 +12,6 @@ import (
 type SensorFoundFunc func ( d *Deconz, uniqueId string, sensor *Sensor )
 type LightFoundFunc func (  d *Deconz, uniqueId string, light *Light )
 type SensorStateChangeFunc func (  d *Deconz, uniqueId string, state map[string]interface{})
-//type LightStateChangeFunc func ( uniqueId string, state map[string]interface{})
 
 type Deconz struct {
 	HubAddress string
@@ -23,6 +22,7 @@ type Deconz struct {
 	OnSensorFound SensorFoundFunc
 	OnLightFound LightFoundFunc
 	OnSensorStateChange SensorStateChangeFunc
+	OnLightStateChange SensorStateChangeFunc
 }
 
 type Event struct {
@@ -106,6 +106,8 @@ func (d *Deconz) Scan() error {
 
 			if d.sensors[event.UniqueID] != nil && d.OnSensorStateChange != nil {
 				go d.OnSensorStateChange(d, event.UniqueID, event.State)
+			} else if d.lights[event.UniqueID] != nil && d.OnLightStateChange != nil {
+				go d.OnLightStateChange(d, event.UniqueID, event.State)
 			}
 		}
 	}()
