@@ -46,6 +46,9 @@ func (l *Light) SetPower(on bool) error {
 
 func (l *Light) updateState(variable string, value interface{}) {
 	l.m.Lock()
+	if l.State == nil {
+		l.State = make(map[string]interface{})
+	}
 	l.State[variable] = value
 	l.m.Unlock()
 }
