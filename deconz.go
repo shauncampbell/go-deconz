@@ -105,8 +105,12 @@ func (d *Deconz) Scan() error {
 			}
 
 			if d.sensors[event.UniqueID] != nil && d.OnSensorStateChange != nil {
+				sensor := d.sensors[event.UniqueID]
+				sensor.updateState(event.State)
 				go d.OnSensorStateChange(d, event.UniqueID, event.State)
 			} else if d.lights[event.UniqueID] != nil && d.OnLightStateChange != nil {
+				light := d.lights[event.UniqueID]
+				light.updateState(event.State)
 				go d.OnLightStateChange(d, event.UniqueID, event.State)
 			}
 		}

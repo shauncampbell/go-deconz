@@ -1,5 +1,7 @@
 package deconz
 
+import "sync"
+
 type Sensor struct {
 	Id               string
 	Hub				 *Deconz
@@ -12,5 +14,11 @@ type Sensor struct {
 	SoftwareVersion  string                 `json:"swversion"`
 	Type             string                 `json:"type"`
 	UniqueID         string                 `json:"uniqueid"`
+	m sync.Mutex
 }
 
+func (l *Sensor) updateState(state map[string]interface{}) {
+	l.m.Lock()
+	l.State = state
+	l.m.Unlock()
+}

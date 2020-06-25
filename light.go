@@ -36,7 +36,7 @@ func (l *Light) SetPower(on bool) error {
 	}
 
 	if res.StatusCode == 200 {
-		l.updateState("on", on)
+		l.updateStateVariable("on", on)
 		return nil
 	}
 
@@ -44,12 +44,18 @@ func (l *Light) SetPower(on bool) error {
 	return fmt.Errorf("failed to set light state")
 }
 
-func (l *Light) updateState(variable string, value interface{}) {
+func (l *Light) updateStateVariable(variable string, value interface{}) {
 	l.m.Lock()
 	if l.State == nil {
 		l.State = make(map[string]interface{})
 	}
 	l.State[variable] = value
+	l.m.Unlock()
+}
+
+func (l *Light) updateState(state map[string]interface{}) {
+	l.m.Lock()
+	l.State = state
 	l.m.Unlock()
 }
 
@@ -67,7 +73,7 @@ func (l *Light) SetBrightness(brightness int) error {
 	}
 
 	if res.StatusCode == 200 {
-		l.updateState("bri", brightness)
+		l.updateStateVariable("bri", brightness)
 		return nil
 	}
 
