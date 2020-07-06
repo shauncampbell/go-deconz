@@ -149,7 +149,12 @@ func (d *Deconz) updateSensors() error {
 		v.Id = k
 		v.Hub = d
 		sensor := m[k]
-		d.sensors[sensor.UniqueID] = sensor
+		if d.sensors[sensor.UniqueID] == nil {
+			d.sensors[sensor.UniqueID] = sensor
+		} else {
+			d.sensors[sensor.UniqueID].State = sensor.State
+		}
+
 		if d.OnSensorFound != nil {
 			go d.OnSensorFound(d, sensor.UniqueID, sensor)
 		}
