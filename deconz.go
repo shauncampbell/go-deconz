@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"time"
 )
 
 type SensorFoundFunc func ( d *Deconz, uniqueId string, sensor *Sensor )
@@ -97,7 +98,8 @@ func (d *Deconz) Scan() error {
 			_, message, err := c.ReadMessage()
 			if err != nil {
 				fmt.Println("read:", err)
-				return
+				time.Sleep(30 * time.Second)
+				continue
 			}
 			var event Event
 			if err = json.Unmarshal(message, &event); err != nil {
